@@ -1,0 +1,301 @@
+/* region Themes */
+.dark-theme {
+    --color-primary: #1a1a1a;
+    --color-secondary: #333333;
+    --color-tertiary: #263d3d;
+    --color-accent: #38d8a3;
+    --color-font: #F5F5F5;
+}
+
+.light-theme {
+    --color-primary: #FFFFFF;
+    --color-secondary: #fdf8ea;
+    --color-tertiary: #CCD5AE;
+    --color-accent: #95721f;
+    --color-font: #333333;
+}
+
+/* endregion */
+
+/* region General */
+@font-face {
+    font-family: 'Lexend Exa';
+    src: url('../fonts/LexendExa.ttf');
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    width: 100vw;
+}
+
+body {
+    background-color: var(--color-primary);
+    color: var(--color-font);
+    font-family: 'Lexend Exa', sans-serif;
+    font-size: calc(0.5rem + 0.3vw + 0.3vh);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: 100%;
+    height: 100%;
+    --button-transition: 0.2s;
+}
+
+button {
+    font-family: 'Lexend Exa', sans-serif;
+    transition: background-color var(--button-transition), color var(--button-transition);
+}
+
+#root {
+    margin: 0;
+    padding: 0;
+}
+
+.icon {
+    font-size: 1.8em;
+}
+
+.icon:hover {
+    cursor: pointer;
+}
+
+.no-todos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5em;
+}
+
+/* endregion */
+
+/* region AddToDo */
+.addtodo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 8vh;
+    margin: 5vh 0;
+    --form-height: 6vh;
+    --text-input-width: 40vw;
+}
+
+.addtodo-container input {
+    background-color: var(--color-secondary);
+    border: transparent solid 0.2rem;
+    border-radius: 1rem;
+    color: var(--color-font);
+    font-family: 'Lexend Exa', sans-serif;
+    text-align: center;
+    font-size: 1.4em;
+    padding: 0.8vw;
+    margin-right: 1vw;
+    height: var(--form-height);
+}
+
+.addtodo-container input[type="date"] {
+    font-size: 1em;
+    color: hsl(0, 0%, 70%);
+}
+
+#add-todo-text {
+    width: var(--text-input-width);
+}
+
+.addtodo-container input:focus {
+    outline: none;
+    border: var(--color-accent) solid 0.2rem;
+}
+
+.addtodo-container button {
+    background-color: var(--color-accent);
+    border: none;
+    border-radius: 1rem;
+    color: var(--color-tertiary);
+    font-family: 'Lexend Exa', sans-serif;
+    height: var(--form-height);
+    width: var(--form-height);
+}
+
+.addtodo-container button:hover {
+    background-color: var(--color-tertiary);
+    color: var(--color-accent);
+    cursor: pointer;
+}
+
+/* endregion */
+
+/* region ToDoList */
+.todo-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 5%;
+    padding-left: 0;
+    height: 100%;
+}
+
+/* endregion */
+
+/* region ToDoItem */
+.todo-item {
+    display: flex;
+    align-items: center;
+    background: var(--color-secondary);
+    border-radius: 1rem;
+    width: 100%;
+    height: 100%;
+    margin: 1vh 0;
+    padding: 1% 5%;
+    --checkbox-transition: 0.2s;
+    --buttons-height: 5vh;
+}
+
+.checked-item {
+    opacity: 0.5;
+}
+
+.todo-checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--buttons-height);
+    height: var(--buttons-height);
+    color: var(--color-font);
+    border: var(--color-accent) solid 0.2rem;
+    border-radius: 0.5rem;
+    appearance: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.todo-checkbox::before {
+    content: '✓';
+    opacity: 0;
+    font-size: 2em;
+    font-weight: bolder;
+    transition: opacity var(--checkbox-transition);
+}
+
+.todo-checkbox:checked {
+    color: var(--color-tertiary);
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+}
+
+.todo-checkbox:checked::before {
+    opacity: 1;
+    color: var(--color-primary);
+}
+
+.todo-checkbox:checked + .todo-label {
+    text-decoration: line-through;
+    text-decoration-thickness: 0.12em;
+    color: var(--color-accent);
+}
+
+.todo-checkbox:checked + .todo-label + .date-container .todo-due-date,
+.todo-checkbox:checked + .todo-label + .date-container .no-date {
+    color: var(--color-accent);
+}
+
+.todo-label {
+    flex: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+    text-align: center;
+    user-select: none;
+    overflow: hidden;
+    white-space: nowrap;
+    margin: 0 2%;
+}
+
+.date-container {
+    width: 30%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.todo-label,
+.todo-due-date {
+    border: transparent solid 0.2rem;
+    border-radius: 0.5rem;
+    font-family: 'Lexend Exa', sans-serif;
+    color: var(--color-font);
+    padding: 0.4rem;
+}
+
+.todo-label:focus,
+.todo-due-date:focus {
+    outline: none;
+    border: var(--color-accent) solid 0.2rem;
+}
+
+.todo-due-date {
+    font-size: 1em;
+    background: var(--color-secondary);
+}
+
+.todo-due-date:focus {
+    outline: none;
+    border: var(--color-accent) solid 0.2rem;
+}
+
+.todo-due-date:disabled {
+    cursor: default;
+}
+
+.remove-date-button {
+    height: calc(var(--buttons-height) * 0.6);
+    width: calc(var(--buttons-height) * 0.6);
+    border: none;
+    border-radius: 0.5rem;
+    background-color: transparent;
+    color: var(--color-accent);
+    transition: background-color 0s;
+}
+
+.add-date-button {
+    font-size: 1em;
+    height: calc(var(--buttons-height) * 0.6);
+    border: var(--color-accent) solid 0.2rem;
+    border-radius: 0.5rem;
+    background-color: transparent;
+    color: var(--color-font);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6%;
+}
+
+.add-date-button:hover {
+    background-color: var(--color-accent);
+    color: var(--color-tertiary);
+    cursor: pointer;
+}
+
+.todo-button {
+    height: var(--buttons-height);
+    width: var(--buttons-height);
+    border: none;
+    border-radius: 0.5rem;
+    background-color: var(--color-accent);
+    color: var(--color-tertiary);
+    margin-left: 2%;
+}
+
+.todo-button:hover {
+    background-color: var(--color-tertiary);
+    color: var(--color-accent);
+    cursor: pointer;
+}
+
+/* endregion */
