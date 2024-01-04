@@ -1,17 +1,22 @@
+import React, {FormEvent} from "react";
 import { useState } from "react";
+import AddToDoProps from "./types/AddToDoProps";
 
-function AddToDo({ onSubmit }) {
+function AddToDo({ onSubmit }: AddToDoProps) {
 	const [newTodo, setNewTodo] = useState("");
 	const [dueDate, setNewDueDate] = useState("");
 
-	const handleSubmit = (e) => {
+	// Handle the submission of the form
+	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (newTodo === "") return;
-		onSubmit(newTodo, dueDate);
+		dueDate === "" ? onSubmit(newTodo, "no-date") :
+		onSubmit(newTodo, new Date(dueDate));
 		setNewTodo("");
 		setNewDueDate("");
 	};
 
+	// Render the form
 	return (
 		<form className={"addtodo-container"} onSubmit={handleSubmit}>
 			<label htmlFor="todo"></label>

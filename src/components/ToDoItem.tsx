@@ -1,89 +1,92 @@
 import { format } from "date-fns";
-import { useState } from "react";
+import {MouseEvent, KeyboardEvent, FocusEvent, ChangeEvent, useState} from "react";
+import ToDoItemProps from "./types/ToDoItem";
+import React from "react";
 
-function ToDoItem(props) {
+function ToDoItem({ key, todo, toggleCompleted, deleteToDo, updateToDo }: ToDoItemProps) {
 	// define title and date as state variables
 	const [date, setDate] = useState(
-		props.todo.dueDate ? props.todo.dueDate : "no-date",
+		todo.dueDate ? todo.dueDate : "no-date",
 	);
-	const [title, setTitle] = useState(props.todo.title);
+	const [title, setTitle] = useState(todo.title);
 
 	// update the todo when the title is changed
-	function handleTitleBlur(event) {
+	function handleTitleBlur(event: FocusEvent<HTMLElement>) {
 		let newTitle = event.target.innerHTML;
 		if (newTitle === "") {
 			alert("Please enter a title");
 			event.target.innerHTML = title;
 		} else {
 			setTitle(newTitle);
-			props.updateToDo(props.todo.id, newTitle, date);
+			updateToDo(todo.id, newTitle, date);
 		}
 	}
 
 	// update the todo date field when the due date is being edited
-	function handleDateChange(event) {
+	function handleDateChange(event: ChangeEvent<HTMLInputElement>) {
 		let newDate = event.target.value;
 		setDate(newDate);
 	}
 
 	// update the todo date when the due date is changed
-	function handleDateBlur(event) {
+	function handleDateBlur(event: FocusEvent<HTMLInputElement>) {
 		if (date !== "no-date" && date < format(new Date(), "yyyy-MM-dd")) {
 			alert("Please enter a valid date");
-			setDate(props.todo.dueDate);
+			setDate(todo.dueDate);
 		} else {
-			props.updateToDo(props.todo.id, props.todo.title, date);
+			updateToDo(todo.id, todo.title, date);
 		}
 	}
 
 	// prevent the user from entering a new line in the title field
-	function handleKeyDown(event) {
+	function handleKeyDown(event: KeyboardEvent<HTMLElement>) {
 		if (event.key === "Enter") {
 			event.preventDefault();
-			event.target.innerHTML = event.target.innerHTML.replace(
+			(event.target as HTMLElement).innerHTML = (event.target as HTMLElement).innerHTML.replace(
 				/&[^;]+;/g, // replace HTML entities
 				"",
 			);
-			event.target.blur();
+			(event.target as HTMLElement).blur();
 		}
 	}
 
 	// add the current date to the todo if no date is set
-	function handleAddDate(event) {
+	function handleAddDate(event: MouseEvent<HTMLButtonElement>) {
 		setDate(format(new Date(), "yyyy-MM-dd"));
-		props.updateToDo(
-			props.todo.id,
-			props.todo.title,
+		updateToDo(
+			todo.id,
+			todo.title,
 			format(new Date(), "yyyy-MM-dd"),
 		);
 	}
 
 	// remove the date from the todo if a date is set
-	function handleRemoveDate(event) {
+	function handleRemoveDate(event: MouseEvent<HTMLButtonElement>) {
 		setDate("no-date");
-		props.updateToDo(props.todo.id, props.todo.title, "");
+		updateToDo(todo.id, todo.title, "");
 	}
 
+	// render the todo item
 	return (
-		<li className={`todo-item ${props.todo.completed ? "checked-item" : ""}`}>
+		<li className={`todo-item ${todo.completed ? "checked-item" : ""}`}>
 			<input
 				className="todo-checkbox"
 				type="checkbox"
-				id={`todo-${props.todo.id}`}
+				id={`todo-${todo.id}`}
 				value="todo"
 				name="todo"
-				checked={props.todo.completed}
-				onChange={() => props.toggleCompleted(props.todo.id)}
+				checked={todo.completed}
+				onChange={() => toggleCompleted(todo.id)}
 			/>
 			<label
 				className="todo-label"
 				onBlur={handleTitleBlur}
 				onKeyDown={handleKeyDown}
-				contentEditable={!props.todo.completed}
-				suppressContentEditableWarning="true"
+				contentEditable={!todo.completed}
+				suppressContentEditableWarning={true}
 				spellCheck="false"
 			>
-				{props.todo.title}
+				{todo.title}
 			</label>
 			<div className="date-container">
 				{date !== "no-date" ? (
@@ -91,25 +94,25 @@ function ToDoItem(props) {
 						<button
 							className="remove-date-button"
 							onClick={handleRemoveDate}
-							disabled={props.todo.completed}
+							disabled={todo.completed}
 						>
 							<i className="icon fa-solid fa-xmark"></i>
 						</button>
 						<input
 							className="todo-due-date"
 							type="date"
-							value={date}
+							value={date.toString()}
 							onChange={handleDateChange}
 							onBlur={handleDateBlur}
 							onKeyDown={handleKeyDown}
-							disabled={props.todo.completed}
+							disabled={todo.completed}
 						/>
 					</>
 				) : (
 					<button
 						className="add-date-button"
 						onClick={handleAddDate}
-						disabled={props.todo.completed}
+						disabled={todo.completed}
 					>
 						Add Date
 					</button>
@@ -117,7 +120,7 @@ function ToDoItem(props) {
 			</div>
 			<button
 				className="todo-button"
-				onClick={() => props.deleteTodo(props.todo.id)}
+				onClick={() => deleteToDo(todo.id)}
 			>
 				<i className="icon fa-solid fa-trash"></i>
 			</button>
