@@ -1,6 +1,6 @@
 import React from "react";
-import ToDoItem from "./ToDoItem";
-import ToDoListProps from "./types/ToDoListProps";
+import ToDoItem from "./ToDoItem.tsx";
+import ToDoListProps from "./types/ToDoListProps.ts";
 
 function ToDoList({todos, toggleCompleted, updateToDo, deleteToDo}: ToDoListProps) {
 	// Render the list of todos

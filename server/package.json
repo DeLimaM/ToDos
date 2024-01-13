@@ -1,0 +1,13 @@
+{
+    "name": "todos-server",
+    "version": "0.1.0",
+    "private": true,
+    "prettier": {
+        "useTabs": true,
+        "tabWidth": 3
+    },
+    "dependencies": {
+        "express": "^4.18.2",
+        "typescript": "^5.3.3"
+    }
+}

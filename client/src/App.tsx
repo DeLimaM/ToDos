@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import AddToDo from "./components/AddToDo";
-import ToDoList from "./components/ToDoList";
+import AddToDo from "./components/AddToDo.tsx";
+import ToDoList from "./components/ToDoList.tsx";
 import React from "react";
 import ToDo from "./components/types/ToDo";
 
