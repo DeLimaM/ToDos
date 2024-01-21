@@ -1,3 +1,4 @@
 /client/node_modules/
 /.idea/
 /server/node_modules/
+/server/config/dev.ini

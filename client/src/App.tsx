@@ -6,10 +6,18 @@ import ToDo from "./components/types/ToDo";
 
 function App() {
 	// define todos as a state variable
-	const [todos, setTodos] = useState<ToDo[]>(() => {
-		const localData = localStorage.getItem("todos");
-		return localData ? JSON.parse(localData) : [];
-	});
+	const [todos, setTodos] = useState<ToDo[]>([]);
+
+	// fetch todos from the server
+	useEffect(() => {
+		const fetchTodos = async () => {
+			const res = await fetch("http://localhost:5000/api/todos");
+			const data = await res.json();
+			setTodos(data);
+		};
+
+		fetchTodos();
+	}, []);
 
 	// update a todo's title and due date
 	function updateToDo(id: number, newTitle: string, newDate: Date | string) {
