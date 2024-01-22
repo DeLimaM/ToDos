@@ -12,18 +12,18 @@ class Model {
 	 * Returns the database connection
 	 * @private
 	 */
-	private getDb() {
+	private async getDb() {
 		if (this.db === null) {
 			const config = new Config();
-			const dbDsn = config.getDbDsn();
-			const dbUser = config.getDbUser();
-			const dbPassword = config.getDbPassword();
 			const mySql = require("mysql2/promise");
 			const connectionOptions: ConnectionOptions = {
-				user: dbUser,
-				password: dbPassword,
+				host : config.getDbHost(),
+				port: config.getDbPort(),
+				database: config.getDbName(),
+				user: config.getDbUser(),
+				password: config.getDbPassword(),
 			};
-			this.db = mySql.createConnection(connectionOptions);
+			this.db = await mySql.createConnection(connectionOptions);
 		}
 		return this.db;
 	}

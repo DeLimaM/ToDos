@@ -4,12 +4,16 @@ import { parse } from "ini";
 const configPath = "config/dev.ini";
 
 class Config {
-	private dbDsn: string;
+	private dbHost: string;
+	private dbPort: number;
+	private dbName: string;
 	private dbUser: string;
 	private dbPassword: string;
 
 	constructor() {
-		this.dbDsn = "dsn not set";
+		this.dbHost = "host not set";
+		this.dbPort = -1;
+		this.dbName = "name not set";
 		this.dbUser = "user not set";
 		this.dbPassword = "password not set";
 		this.parseIniFile();
@@ -19,7 +23,9 @@ class Config {
 		try {
 			const data = readFileSync(configPath, "utf-8");
 			const parsed = parse(data);
-			this.dbDsn = parsed.DB.dsn;
+			this.dbHost = parsed.DB.host;
+			this.dbPort = parseInt(parsed.DB.port);
+			this.dbName = parsed.DB.name;
 			this.dbUser = parsed.DB.username;
 			this.dbPassword = parsed.DB.password;
 		} catch (err) {
@@ -27,8 +33,16 @@ class Config {
 		}
 	}
 
-	getDbDsn(): string {
-		return this.dbDsn;
+	getDbHost(): string {
+		return this.dbHost;
+	}
+
+	getDbPort(): number {
+		return this.dbPort;
+	}
+
+	getDbName(): string {
+		return this.dbName;
 	}
 
 	getDbUser(): string {
