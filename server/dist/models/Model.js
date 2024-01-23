@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = require("../config/config");
+const Config_1 = require("../config/Config");
 class Model {
     constructor() {
         this.db = null;
@@ -20,19 +20,22 @@ class Model {
      * @private
      */
     getDb() {
-        if (this.db === null) {
-            const config = new config_1.Config();
-            const dbDsn = config.getDbDsn();
-            const dbUser = config.getDbUser();
-            const dbPassword = config.getDbPassword();
-            this.db = require("mysql2/promise.js")({
-                host: dbDsn,
-                user: dbUser,
-                password: dbPassword,
-                database: "todos",
-            });
-        }
-        return this.db;
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.db === null) {
+                const config = new Config_1.Config();
+                const mySql = require("mysql2/promise");
+                const connectionOptions = {
+                    host: config.getDbHost(),
+                    port: config.getDbPort(),
+                    database: config.getDbName(),
+                    user: config.getDbUser(),
+                    password: config.getDbPassword(),
+                    rowsAsArray: true,
+                };
+                this.db = yield mySql.createConnection(connectionOptions);
+            }
+            return this.db;
+        });
     }
     /**
      * Executes a query
@@ -43,14 +46,14 @@ class Model {
     executeQuery(query, params = []) {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.db) {
+                let results;
                 if (params.length === 0) {
-                    const [results] = yield this.db.query(query);
-                    return results;
+                    [results] = yield this.db.query(query);
                 }
                 else {
-                    const [results] = yield this.db.execute(query, params);
-                    return results;
+                    [results] = yield this.db.execute(query, params);
                 }
+                return results;
             }
             else {
                 return Promise.reject(new Error("Database connection is not established"));

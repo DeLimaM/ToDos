@@ -1,50 +1,40 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Config = void 0;
-const promises_1 = require("node:fs/promises");
+const fs_1 = require("fs");
 const ini_1 = require("ini");
-const configPath = "dev.ini";
+const configPath = "config/dev.ini";
 class Config {
     constructor() {
-        this.dbDsn = "unset";
-        this.dbUser = "unset";
-        this.dbPassword = "unset";
-        this.init();
+        this.dbHost = "host not set";
+        this.dbPort = -1;
+        this.dbName = "name not set";
+        this.dbUser = "user not set";
+        this.dbPassword = "password not set";
+        this.parseIniFile();
     }
-    /**
-     * Initializes the config object
-     * @private
-     */
-    init() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const config = yield this.parseIniFile(configPath);
-            this.dbDsn = config.dbDsn;
-            this.dbUser = config.dbUser;
-            this.dbPassword = config.dbPassword;
-        });
+    parseIniFile() {
+        try {
+            const data = (0, fs_1.readFileSync)(configPath, "utf-8");
+            const parsed = (0, ini_1.parse)(data);
+            this.dbHost = parsed.DB.host;
+            this.dbPort = parseInt(parsed.DB.port);
+            this.dbName = parsed.DB.name;
+            this.dbUser = parsed.DB.username;
+            this.dbPassword = parsed.DB.password;
+        }
+        catch (err) {
+            console.log(err);
+        }
     }
-    /**
-     * Parses an ini file and returns a key-value object
-     * @param filePath
-     * @private
-     */
-    parseIniFile(filePath) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const fileContent = yield (0, promises_1.readFile)(filePath, "utf-8");
-            return (0, ini_1.parse)(fileContent);
-        });
+    getDbHost() {
+        return this.dbHost;
     }
-    getDbDsn() {
-        return this.dbDsn;
+    getDbPort() {
+        return this.dbPort;
+    }
+    getDbName() {
+        return this.dbName;
     }
     getDbUser() {
         return this.dbUser;

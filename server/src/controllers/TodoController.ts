@@ -6,7 +6,7 @@ class TodoController {
 	private todosManager: TodosManager = new TodosManager();
 
 	async getAll(req: Request, res: Response) {
-		const todos = await this.todosManager.getAllTodos();
+		const todos = await this.todosManager.getAll();
 		res.json(todos);
 	}
 
@@ -16,14 +16,14 @@ class TodoController {
 	}
 
 	async create(req: Request, res: Response) {
-		const newTodo = await this.todosManager.createTodo(
+		const newTodo = await this.todosManager.create(
 			new Todo(0, req.body.title, req.body.completed, req.body.dueDate),
 		);
 		res.json(newTodo);
 	}
 
 	async update(req: Request, res: Response) {
-		const updatedTodo = await this.todosManager.updateTodo(
+		const updatedTodo = await this.todosManager.update(
 			new Todo(
 				Number(req.params.id),
 				req.body.title,
@@ -35,7 +35,7 @@ class TodoController {
 	}
 
 	async delete(req: Request, res: Response) {
-		await this.todosManager.deleteTodo(Number(req.params.id));
+		await this.todosManager.delete(Number(req.params.id));
 		res.json({ message: "Todo deleted" });
 	}
 }

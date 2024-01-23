@@ -33,6 +33,13 @@ class Todo extends Model {
 	setId(id: number) {
 		this.id = id;
 	}
+
+	/**
+	 * Returns a string representation of the Todo object
+	 */
+	toString() {
+		return `Todo { id: ${this.id}, title: ${this.title}, completed: ${this.completed}, dueDate: ${this.dueDate} }`;
+	}
 }
 
 export default Todo;

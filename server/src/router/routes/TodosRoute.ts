@@ -11,7 +11,7 @@ class TodosRoute extends Route {
 
 	initializeRoutes() {
 		this.router.get("/todos", (req, res) => {
-			this.todosManager.getAllTodos().then((todos) => {
+			this.todosManager.getAll().then((todos) => {
 				res.json(todos);
 			});
 		});

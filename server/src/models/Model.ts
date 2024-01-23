@@ -1,5 +1,10 @@
 import { Config } from "../config/Config";
-import { Connection, ConnectionOptions } from "mysql2/promise";
+import {
+	Connection,
+	ConnectionOptions,
+	ResultSetHeader,
+	RowDataPacket,
+} from "mysql2/promise";
 
 class Model {
 	private db: null | Connection = null;
@@ -17,11 +22,12 @@ class Model {
 			const config = new Config();
 			const mySql = require("mysql2/promise");
 			const connectionOptions: ConnectionOptions = {
-				host : config.getDbHost(),
+				host: config.getDbHost(),
 				port: config.getDbPort(),
 				database: config.getDbName(),
 				user: config.getDbUser(),
 				password: config.getDbPassword(),
+				rowsAsArray: true,
 			};
 			this.db = await mySql.createConnection(connectionOptions);
 		}
@@ -34,15 +40,18 @@ class Model {
 	 * @param params
 	 * @protected
 	 */
-	protected async executeQuery(query: string, params: any[] = []) {
+	protected async executeQuery<T extends RowDataPacket[] | ResultSetHeader>(
+		query: string,
+		params: any[] = [],
+	): Promise<T> {
 		if (this.db) {
+			let results: T;
 			if (params.length === 0) {
-				const [results] = await this.db.query(query);
-				return results;
+				[results] = await this.db.query<T>(query);
 			} else {
-				const [results] = await this.db.execute(query, params);
-				return results;
+				[results] = await this.db.execute<T>(query, params);
 			}
+			return results;
 		} else {
 			return Promise.reject(
 				new Error("Database connection is not established"),

@@ -1,7 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class Todo {
-    constructor(id = -1, title, completed, dueDate) {
+const Model_1 = __importDefault(require("./Model"));
+class Todo extends Model_1.default {
+    constructor(id, title, completed, dueDate) {
+        super();
         this.id = id;
         this.title = title;
         this.completed = completed;
@@ -21,15 +26,6 @@ class Todo {
     }
     setId(id) {
         this.id = id;
-    }
-    setTitle(title) {
-        this.title = title;
-    }
-    setCompleted(completed) {
-        this.completed = completed;
-    }
-    setDueDate(dueDate) {
-        this.dueDate = dueDate;
     }
 }
 exports.default = Todo;

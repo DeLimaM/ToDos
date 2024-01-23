@@ -1,5 +1,7 @@
 import Model from "./Model";
 import Todo from "./Todo";
+import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
+import Logger from "../logging/Logger";
 
 class TodosManager extends Model {
 	constructor() {
@@ -10,28 +12,18 @@ class TodosManager extends Model {
 	 * Returns all todos
 	 * @returns {Promise<Todo[]>}
 	 */
-	async getAllTodos(): Promise<Todo[]> {
-		const results = await this.executeQuery("SELECT * FROM todos");
-		const todos: Todo[] = [];
-		if (Array.isArray(results)) {
-			for (const result of results) {
-				if (
-					"id" in result &&
-					"title" in result &&
-					"completed" in result &&
-					"dueDate" in result
-				) {
-					const todo = new Todo(
-						result.id,
-						result.title,
-						result.completed,
-						result.dueDate,
-					);
-					todos.push(todo);
-				}
-			}
-		}
-		return todos;
+	async getAll(): Promise<Todo[]> {
+		Logger.Log("Called TodosManager.getAll()");
+		const req = "SELECT * FROM todos";
+		const todos = await this.executeQuery<RowDataPacket[]>(req);
+		return todos.map((todo) => {
+			return new Todo(
+				todo[0] as number,
+				todo[1] as string,
+				todo[2] as boolean,
+				todo[3] as Date,
+			);
+		});
 	}
 
 	/**
@@ -40,27 +32,20 @@ class TodosManager extends Model {
 	 * @returns {Promise<Todo>}
 	 */
 	async getById(id: number): Promise<Todo> {
-		const results = await this.executeQuery(
-			"SELECT * FROM todos WHERE id = ?",
-			[id],
-		);
-		if (Array.isArray(results) && results.length > 0) {
-			const result = results[0];
-			if (
-				"id" in result &&
-				"title" in result &&
-				"completed" in result &&
-				"dueDate" in result
-			) {
-				return new Todo(
-					result.id,
-					result.title,
-					result.completed,
-					result.dueDate,
-				);
-			}
+		Logger.Log(`Called TodosManager.getById(${id})`);
+		const req = "SELECT * FROM todos WHERE id = ?";
+		const todos = await this.executeQuery<RowDataPacket[]>(req, [id]);
+		if (todos.length === 0) {
+			return Promise.reject(new Error("Todo not found"));
+		} else {
+			const todo = todos[0];
+			return new Todo(
+				todo[0] as number,
+				todo[1] as string,
+				todo[2] as boolean,
+				todo[3] as Date,
+			);
 		}
-		throw new Error("Todo not found");
 	}
 
 	/**
@@ -68,19 +53,21 @@ class TodosManager extends Model {
 	 * @param todo
 	 * @returns {Promise<Todo>}
 	 */
-	async createTodo(todo: Todo): Promise<Todo> {
-		const results = await this.executeQuery(
-			"INSERT INTO todos (title, completed, dueDate) VALUES (?, ?, ?)",
-			[todo.getTitle(), todo.getCompleted(), todo.getDueDate()],
+	async create(todo: Todo): Promise<Todo> {
+		Logger.Log(`Called TodosManager.create(${todo.toString()})`);
+		const req =
+			"INSERT INTO todos (title, completed, dueDate) VALUES (?, ?, ?)";
+		const result = await this.executeQuery<ResultSetHeader>(req, [
+			todo.title,
+			todo.completed,
+			todo.dueDate,
+		]);
+		return new Todo(
+			result.insertId,
+			todo.title,
+			todo.completed,
+			todo.dueDate,
 		);
-		if (Array.isArray(results)) {
-			const result_3 = results[0];
-			if ("insertId" in result_3) {
-				todo.setId(result_3.insertId);
-				return todo;
-			}
-		}
-		throw new Error("Todo not created : ");
 	}
 
 	/**
@@ -88,23 +75,17 @@ class TodosManager extends Model {
 	 * @param todo
 	 * @returns {Promise<number>}
 	 */
-	async updateTodo(todo: Todo): Promise<number> {
-		const results = await this.executeQuery(
-			"UPDATE todos SET title = ?, completed = ?, dueDate = ? WHERE id = ?",
-			[
-				todo.getTitle(),
-				todo.getCompleted(),
-				todo.getDueDate(),
-				todo.getId(),
-			],
-		);
-		if (Array.isArray(results)) {
-			const result_4 = results[0];
-			if ("affectedRows" in result_4) {
-				return result_4.affectedRows;
-			}
-		}
-		throw new Error("Todo not updated");
+	async update(todo: Todo): Promise<number> {
+		Logger.Log(`Called TodosManager.update(${todo.toString()})`);
+		const req =
+			"UPDATE todos SET title = ?, completed = ?, dueDate = ? WHERE id = ?";
+		const result = await this.executeQuery<ResultSetHeader>(req, [
+			todo.title,
+			todo.completed,
+			todo.dueDate,
+			todo.id,
+		]);
+		return result.affectedRows;
 	}
 
 	/**
@@ -112,18 +93,11 @@ class TodosManager extends Model {
 	 * @param id
 	 * @returns {Promise<number>}
 	 */
-	async deleteTodo(id: number): Promise<number> {
-		const results = await this.executeQuery(
-			"DELETE FROM todos WHERE id = ?",
-			[id],
-		);
-		if (Array.isArray(results)) {
-			const result = results[0];
-			if ("affectedRows" in result) {
-				return result.affectedRows;
-			}
-		}
-		throw new Error("Todo not deleted");
+	async delete(id: number): Promise<number> {
+		Logger.Log(`Called TodosManager.delete(${id})`);
+		const req = "DELETE FROM todos WHERE id = ?";
+		const result = await this.executeQuery<ResultSetHeader>(req, [id]);
+		return result.affectedRows;
 	}
 }
 
