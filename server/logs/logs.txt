@@ -1,0 +1,2 @@
+16:54:53 - LOG - Server started
+16:54:53 - LOG - Server listening on port 5000

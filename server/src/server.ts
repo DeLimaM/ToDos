@@ -5,13 +5,13 @@ import Logger from "./logging/Logger";
 
 const app = express();
 const todosRouter = new TodosRouter();
+const logger = new Logger();
 
 app.use(cors());
 app.use(express.json());
 app.use(todosRouter.router);
-
-Logger.Info("Server is starting...");
+logger.Log("Server started");
 
 app.listen(5000, () => {
-	Logger.Info("Server is running on port 5000");
+	logger.Log("Server listening on port 5000");
 });

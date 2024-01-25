@@ -1,12 +1,22 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import AddToDo from "./components/AddToDo.tsx";
 import ToDoList from "./components/ToDoList.tsx";
-import React from "react";
 import ToDo from "./components/types/ToDo";
 
 function App() {
 	// define todos as a state variable
 	const [todos, setTodos] = useState<ToDo[]>([]);
+
+	useEffect(() => {
+		fetchTodos();
+	}, []);
+
+	// fetch todos from the server and set the todos state
+	async function fetchTodos() {
+		const res = await fetch("http://localhost:5000/todos");
+		const data = await res.json();
+		setTodos(data);
+	}
 
 	// update a todos title and due date
 	async function updateToDo(
@@ -26,8 +36,9 @@ function App() {
 				},
 				body: JSON.stringify(todoToUpdate),
 			});
-			const data = await res.json();
-			setTodos([...todos, data]);
+			if (res.ok) {
+				fetchTodos();
+			}
 		}
 	}
 

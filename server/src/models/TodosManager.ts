@@ -13,7 +13,6 @@ class TodosManager extends Model {
 	 * @returns {Promise<Todo[]>}
 	 */
 	async getAll(): Promise<Todo[]> {
-		Logger.Log("Called TodosManager.getAll()");
 		const req = "SELECT * FROM todos";
 		const todos = await this.executeQuery<RowDataPacket[]>(req);
 		return todos.map((todo) => {
@@ -32,7 +31,6 @@ class TodosManager extends Model {
 	 * @returns {Promise<Todo>}
 	 */
 	async getById(id: number): Promise<Todo> {
-		Logger.Log(`Called TodosManager.getById(${id})`);
 		const req = "SELECT * FROM todos WHERE id = ?";
 		const todos = await this.executeQuery<RowDataPacket[]>(req, [id]);
 		if (todos.length === 0) {
@@ -54,7 +52,6 @@ class TodosManager extends Model {
 	 * @returns {Promise<Todo>}
 	 */
 	async create(todo: Todo): Promise<Todo> {
-		Logger.Log(`Called TodosManager.create(${todo.toString()})`);
 		const req =
 			"INSERT INTO todos (title, completed, dueDate) VALUES (?, ?, ?)";
 		const result = await this.executeQuery<ResultSetHeader>(req, [
@@ -76,7 +73,6 @@ class TodosManager extends Model {
 	 * @returns {Promise<number>}
 	 */
 	async update(todo: Todo): Promise<number> {
-		Logger.Log(`Called TodosManager.update(${todo.toString()})`);
 		const req =
 			"UPDATE todos SET title = ?, completed = ?, dueDate = ? WHERE id = ?";
 		const result = await this.executeQuery<ResultSetHeader>(req, [
@@ -94,7 +90,6 @@ class TodosManager extends Model {
 	 * @returns {Promise<number>}
 	 */
 	async delete(id: number): Promise<number> {
-		Logger.Log(`Called TodosManager.delete(${id})`);
 		const req = "DELETE FROM todos WHERE id = ?";
 		const result = await this.executeQuery<ResultSetHeader>(req, [id]);
 		return result.affectedRows;

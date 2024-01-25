@@ -1,20 +1,30 @@
+import fs from "fs";
+import path from "path";
+
 class Logger {
-	public constructor() {}
-
-	public static Log(message: string) {
-		console.log(`${new Date().toLocaleTimeString()} - ${message}`);
+	constructor() {
+		this.Clear();
 	}
 
-	public static Error(message: string) {
-		console.error(`${new Date().toLocaleTimeString()} - ${message}`);
+	public Log(message: string) {
+		this.Write("LOG", message);
 	}
 
-	public static Warn(message: string) {
-		console.warn(`${new Date().toLocaleTimeString()} - ${message}`);
+	private Write(level: string, message: string) {
+		const log = `${new Date().toLocaleTimeString()} - ${level} - ${message}\n`;
+		fs.appendFile(path.join(__dirname, "../../logs/logs.txt"), log, (err) => {
+			if (err) {
+				console.error(`Failed to write to log file: ${err}`);
+			}
+		});
 	}
 
-	public static Info(message: string) {
-		console.info(`${new Date().toLocaleTimeString()} - ${message}`);
+	private Clear() {
+		fs.writeFile(path.join(__dirname, "../../logs/logs.txt"), "", (err) => {
+			if (err) {
+				console.error(`Failed to clear log file: ${err}`);
+			}
+		});
 	}
 }
 

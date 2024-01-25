@@ -1,4 +1,4 @@
-import React, {FormEvent} from "react";
+import React, { FormEvent } from "react";
 import { useState } from "react";
 import AddToDoProps from "./types/AddToDoProps";
 
@@ -10,8 +10,12 @@ function AddToDo({ onSubmit }: AddToDoProps) {
 	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (newTodo === "") return;
-		dueDate === "" ? onSubmit(newTodo, "no-date") :
-		onSubmit(newTodo, new Date(dueDate));
+		// format the date to get only (yyyy-mm-dd)
+		let formattedDate =
+			dueDate === ""
+				? "no-date"
+				: new Date(dueDate).toISOString().substring(0, 10);
+		onSubmit(newTodo, formattedDate);
 		setNewTodo("");
 		setNewDueDate("");
 	};
