@@ -1,10 +1,20 @@
 import React, { FormEvent } from "react";
 import { useState } from "react";
-import AddToDoProps from "./types/AddToDoProps";
 
-function AddToDo({ onSubmit }: AddToDoProps) {
+function AddToDo() {
 	const [newTodo, setNewTodo] = useState("");
 	const [dueDate, setNewDueDate] = useState("");
+
+	async function onSubmit(title: string, dueDate: Date | string) {
+		const newTodo = { title, dueDate, completed: false };
+		const res = await fetch("http://localhost:5000/todos", {
+			method: "POST",
+			headers: {
+				"Content-type": "application/json",
+			},
+			body: JSON.stringify(newTodo),
+		});
+	}
 
 	// Handle the submission of the form
 	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {

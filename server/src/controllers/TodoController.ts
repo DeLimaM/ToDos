@@ -36,7 +36,7 @@ class TodoController {
 
 	async delete(req: Request, res: Response) {
 		await this.todosManager.delete(Number(req.params.id));
-		res.json({ message: "Todo deleted" });
+		res.json({});
 	}
 }
 

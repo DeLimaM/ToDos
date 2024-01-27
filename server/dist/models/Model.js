@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Config_1 = require("../config/Config");
 class Model {
     constructor() {
-        this.db = null;
         this.getDb();
     }
     /**
@@ -21,7 +20,7 @@ class Model {
      */
     getDb() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (this.db === null) {
+            if (Model.db === null) {
                 const config = new Config_1.Config();
                 const mySql = require("mysql2/promise");
                 const connectionOptions = {
@@ -32,9 +31,9 @@ class Model {
                     password: config.getDbPassword(),
                     rowsAsArray: true,
                 };
-                this.db = yield mySql.createConnection(connectionOptions);
+                Model.db = yield mySql.createConnection(connectionOptions);
             }
-            return this.db;
+            return Model.db;
         });
     }
     /**
@@ -45,13 +44,13 @@ class Model {
      */
     executeQuery(query, params = []) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (this.db) {
+            if (Model.db) {
                 let results;
                 if (params.length === 0) {
-                    [results] = yield this.db.query(query);
+                    [results] = yield Model.db.query(query);
                 }
                 else {
-                    [results] = yield this.db.execute(query, params);
+                    [results] = yield Model.db.execute(query, params);
                 }
                 return results;
             }
@@ -61,4 +60,5 @@ class Model {
         });
     }
 }
+Model.db = null;
 exports.default = Model;

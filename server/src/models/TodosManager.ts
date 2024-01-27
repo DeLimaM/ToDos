@@ -1,7 +1,6 @@
 import Model from "./Model";
 import Todo from "./Todo";
 import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
-import Logger from "../logging/Logger";
 
 class TodosManager extends Model {
 	constructor() {

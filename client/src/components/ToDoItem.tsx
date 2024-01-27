@@ -1,13 +1,23 @@
 import { format } from "date-fns";
-import {MouseEvent, KeyboardEvent, FocusEvent, ChangeEvent, useState} from "react";
-import ToDoItemProps from "./types/ToDoItem";
+import {
+	MouseEvent,
+	KeyboardEvent,
+	FocusEvent,
+	ChangeEvent,
+	useState,
+} from "react";
+import ToDoItemProps from "./types/ToDoItemProps.ts";
 import React from "react";
 
-function ToDoItem({ key, todo, toggleCompleted, deleteToDo, updateToDo }: ToDoItemProps) {
+function ToDoItem({
+	key,
+	todo,
+	onDelete,
+	onUpdate,
+	onCompletedChange,
+}: ToDoItemProps) {
 	// define title and date as state variables
-	const [date, setDate] = useState(
-		todo.dueDate ? todo.dueDate : "no-date",
-	);
+	const [date, setDate] = useState(todo.dueDate ? todo.dueDate : "no-date");
 	const [title, setTitle] = useState(todo.title);
 
 	// update the todo when the title is changed
@@ -18,7 +28,7 @@ function ToDoItem({ key, todo, toggleCompleted, deleteToDo, updateToDo }: ToDoIt
 			event.target.innerHTML = title;
 		} else {
 			setTitle(newTitle);
-			updateToDo(todo.id, newTitle, date);
+			onUpdate({ ...todo, title: newTitle });
 		}
 	}
 
@@ -34,7 +44,7 @@ function ToDoItem({ key, todo, toggleCompleted, deleteToDo, updateToDo }: ToDoIt
 			alert("Please enter a valid date");
 			setDate(todo.dueDate);
 		} else {
-			updateToDo(todo.id, todo.title, date);
+			onUpdate({ ...todo, dueDate: date });
 		}
 	}
 
@@ -42,7 +52,9 @@ function ToDoItem({ key, todo, toggleCompleted, deleteToDo, updateToDo }: ToDoIt
 	function handleKeyDown(event: KeyboardEvent<HTMLElement>) {
 		if (event.key === "Enter") {
 			event.preventDefault();
-			(event.target as HTMLElement).innerHTML = (event.target as HTMLElement).innerHTML.replace(
+			(event.target as HTMLElement).innerHTML = (
+				event.target as HTMLElement
+			).innerHTML.replace(
 				/&[^;]+;/g, // replace HTML entities
 				"",
 			);
@@ -53,17 +65,13 @@ function ToDoItem({ key, todo, toggleCompleted, deleteToDo, updateToDo }: ToDoIt
 	// add the current date to the todo if no date is set
 	function handleAddDate(event: MouseEvent<HTMLButtonElement>) {
 		setDate(format(new Date(), "yyyy-MM-dd"));
-		updateToDo(
-			todo.id,
-			todo.title,
-			format(new Date(), "yyyy-MM-dd"),
-		);
+		onUpdate({ ...todo, dueDate: format(new Date(), "yyyy-MM-dd") });
 	}
 
 	// remove the date from the todo if a date is set
 	function handleRemoveDate(event: MouseEvent<HTMLButtonElement>) {
 		setDate("no-date");
-		updateToDo(todo.id, todo.title, "");
+		onUpdate({ ...todo, dueDate: "no-date" });
 	}
 
 	// render the todo item
@@ -76,7 +84,7 @@ function ToDoItem({ key, todo, toggleCompleted, deleteToDo, updateToDo }: ToDoIt
 				value="todo"
 				name="todo"
 				checked={todo.completed}
-				onChange={() => toggleCompleted(todo.id)}
+				onChange={() => onCompletedChange(todo)}
 			/>
 			<label
 				className="todo-label"
@@ -118,10 +126,7 @@ function ToDoItem({ key, todo, toggleCompleted, deleteToDo, updateToDo }: ToDoIt
 					</button>
 				)}
 			</div>
-			<button
-				className="todo-button"
-				onClick={() => deleteToDo(todo.id)}
-			>
+			<button className="todo-button" onClick={() => onDelete(todo.id)}>
 				<i className="icon fa-solid fa-trash"></i>
 			</button>
 		</li>

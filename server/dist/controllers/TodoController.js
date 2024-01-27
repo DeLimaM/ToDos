@@ -45,7 +45,7 @@ class TodoController {
     delete(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.todosManager.delete(Number(req.params.id));
-            res.json({ message: "Todo deleted" });
+            res.json({});
         });
     }
 }

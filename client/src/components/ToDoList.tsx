@@ -1,8 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ToDoItem from "./ToDoItem.tsx";
-import ToDoListProps from "./types/ToDoListProps.ts";
+import ToDo from "./types/ToDo.ts";
+import ToDoManager from "../models/ToDoManager.ts";
 
-function ToDoList({todos, toggleCompleted, updateToDo, deleteToDo}: ToDoListProps) {
+function ToDoList() {
+	// define todos as a state variable
+	const [todos, setTodos] = useState<ToDo[]>([]);
+
+	// fetch todos from the server when the component mounts
+	useEffect(() => {
+		ToDoManager.getAll().then((todos) => setTodos(todos));
+	}, []);
+
+	// update the todo when the completed status is changed
+	function onCompletedChange(prevTodo: ToDo) {
+		const updatedTodo = { ...prevTodo, completed: !prevTodo.completed };
+		setTodos(
+			todos.map((todo) => {
+				return todo.id === updatedTodo.id ? updatedTodo : todo;
+			}),
+		);
+		ToDoManager.update(updatedTodo);
+	}
+
 	// Render the list of todos
 	return (
 		<ul className="todo-list">
@@ -11,9 +31,9 @@ function ToDoList({todos, toggleCompleted, updateToDo, deleteToDo}: ToDoListProp
 				<ToDoItem
 					key={todo.id}
 					todo={todo}
-					toggleCompleted={toggleCompleted}
-					deleteToDo={deleteToDo}
-					updateToDo={updateToDo}
+					onUpdate={ToDoManager.update}
+					onDelete={ToDoManager.delete}
+					onCompletedChange={onCompletedChange}
 				/>
 			))}
 		</ul>

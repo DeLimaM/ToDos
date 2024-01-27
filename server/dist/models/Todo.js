@@ -27,5 +27,11 @@ class Todo extends Model_1.default {
     setId(id) {
         this.id = id;
     }
+    /**
+     * Returns a string representation of the Todo object
+     */
+    toString() {
+        return `Todo { id: ${this.id}, title: ${this.title}, completed: ${this.completed}, dueDate: ${this.dueDate} }`;
+    }
 }
 exports.default = Todo;

@@ -7,7 +7,7 @@ import {
 } from "mysql2/promise";
 
 class Model {
-	private db: null | Connection = null;
+	private static db: null | Connection = null;
 
 	constructor() {
 		this.getDb();
@@ -18,7 +18,7 @@ class Model {
 	 * @private
 	 */
 	private async getDb() {
-		if (this.db === null) {
+		if (Model.db === null) {
 			const config = new Config();
 			const mySql = require("mysql2/promise");
 			const connectionOptions: ConnectionOptions = {
@@ -29,9 +29,9 @@ class Model {
 				password: config.getDbPassword(),
 				rowsAsArray: true,
 			};
-			this.db = await mySql.createConnection(connectionOptions);
+			Model.db = await mySql.createConnection(connectionOptions);
 		}
-		return this.db;
+		return Model.db;
 	}
 
 	/**
@@ -44,12 +44,12 @@ class Model {
 		query: string,
 		params: any[] = [],
 	): Promise<T> {
-		if (this.db) {
+		if (Model.db) {
 			let results: T;
 			if (params.length === 0) {
-				[results] = await this.db.query<T>(query);
+				[results] = await Model.db.query<T>(query);
 			} else {
-				[results] = await this.db.execute<T>(query, params);
+				[results] = await Model.db.execute<T>(query, params);
 			}
 			return results;
 		} else {
