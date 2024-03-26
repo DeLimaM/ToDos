@@ -1,4 +1,5 @@
 import { Config } from "../config/Config";
+import Logger from "../logging/Logger";
 import {
 	Connection,
 	ConnectionOptions,
@@ -8,6 +9,7 @@ import {
 
 class Model {
 	private static db: null | Connection = null;
+	private static logger: Logger = new Logger();
 
 	constructor() {
 		this.getDb();
@@ -24,12 +26,28 @@ class Model {
 			const connectionOptions: ConnectionOptions = {
 				host: config.getDbHost(),
 				port: config.getDbPort(),
-				database: config.getDbName(),
 				user: config.getDbUser(),
 				password: config.getDbPassword(),
 				rowsAsArray: true,
 			};
+
 			Model.db = await mySql.createConnection(connectionOptions);
+			Model.logger.Log("Database connection established");
+
+			await Model.db?.query(
+				`CREATE DATABASE IF NOT EXISTS ${config.getDbName()}`
+			);
+			Model.logger.Log(`Using database ${config.getDbName()}`);
+			await Model.db?.query(`USE ${config.getDbName()}`);
+			await Model.db?.query(
+				`CREATE TABLE IF NOT EXISTS todos (
+					id INT AUTO_INCREMENT PRIMARY KEY,
+					title VARCHAR(255),
+					completed BOOLEAN DEFAULT false,
+					dueDate DATE
+				)`
+			);
+			Model.logger.Log("Table 'todos' created if not already available");
 		}
 		return Model.db;
 	}
@@ -42,7 +60,7 @@ class Model {
 	 */
 	protected async executeQuery<T extends RowDataPacket[] | ResultSetHeader>(
 		query: string,
-		params: any[] = [],
+		params: any[] = []
 	): Promise<T> {
 		if (Model.db) {
 			let results: T;
@@ -54,7 +72,7 @@ class Model {
 			return results;
 		} else {
 			return Promise.reject(
-				new Error("Database connection is not established"),
+				new Error("Database connection is not established")
 			);
 		}
 	}
