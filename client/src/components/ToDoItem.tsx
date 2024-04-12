@@ -28,7 +28,7 @@ function ToDoItem({
 			event.target.innerHTML = title;
 		} else {
 			setTitle(newTitle);
-			onUpdate({ ...todo, title: newTitle });
+			onUpdate({ ...todo, title: newTitle.split("<br>")[0] });
 		}
 	}
 
@@ -56,7 +56,7 @@ function ToDoItem({
 				event.target as HTMLElement
 			).innerHTML.replace(
 				/&[^;]+;/g, // replace HTML entities
-				"",
+				""
 			);
 			(event.target as HTMLElement).blur();
 		}

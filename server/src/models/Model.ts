@@ -9,7 +9,6 @@ import {
 
 class Model {
 	private static db: null | Connection = null;
-	private static logger: Logger = new Logger();
 
 	constructor() {
 		this.getDb();
@@ -32,12 +31,10 @@ class Model {
 			};
 
 			Model.db = await mySql.createConnection(connectionOptions);
-			Model.logger.Log("Database connection established");
 
 			await Model.db?.query(
 				`CREATE DATABASE IF NOT EXISTS ${config.getDbName()};`
 			);
-			Model.logger.Log(`Using database ${config.getDbName()}`);
 			await Model.db?.query(`USE ${config.getDbName()}`);
 			await Model.db?.query(
 				`CREATE TABLE IF NOT EXISTS todos (
@@ -47,7 +44,6 @@ class Model {
 					dueDate VARCHAR(255)
 				);`
 			);
-			Model.logger.Log("Table 'todos' created if not already available");
 		}
 		return Model.db;
 	}

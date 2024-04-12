@@ -18,7 +18,7 @@ function ToDoList() {
 		setTodos(
 			todos.map((todo) => {
 				return todo.id === updatedTodo.id ? updatedTodo : todo;
-			}),
+			})
 		);
 		ToDoManager.update(updatedTodo);
 	}
