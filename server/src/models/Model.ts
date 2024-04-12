@@ -35,7 +35,7 @@ class Model {
 			Model.logger.Log("Database connection established");
 
 			await Model.db?.query(
-				`CREATE DATABASE IF NOT EXISTS ${config.getDbName()}`
+				`CREATE DATABASE IF NOT EXISTS ${config.getDbName()};`
 			);
 			Model.logger.Log(`Using database ${config.getDbName()}`);
 			await Model.db?.query(`USE ${config.getDbName()}`);
@@ -44,8 +44,8 @@ class Model {
 					id INT AUTO_INCREMENT PRIMARY KEY,
 					title VARCHAR(255),
 					completed BOOLEAN DEFAULT false,
-					dueDate DATE
-				)`
+					dueDate VARCHAR(255)
+				);`
 			);
 			Model.logger.Log("Table 'todos' created if not already available");
 		}
